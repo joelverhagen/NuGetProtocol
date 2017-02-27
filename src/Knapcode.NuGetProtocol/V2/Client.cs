@@ -22,13 +22,6 @@ namespace Knapcode.NuGetProtocol.V2
             return await _protocol.PushPackageAsync(source, package);
         }
 
-        public async Task<bool> PackageExistsAsync(PackageSource source, PackageIdentity package)
-        {
-            var packageResult = await GetPackageAsync(source, package);
-
-            return packageResult.StatusCode == HttpStatusCode.OK;
-        }
-
         public async Task<HttpResult<PackageEntry>> GetPackageAsync(PackageSource source, PackageIdentity package)
         {
             return await _protocol.GetPackageAsync(source, package);
@@ -40,11 +33,13 @@ namespace Knapcode.NuGetProtocol.V2
 
             package.Position = 0;
 
-            if (await PackageExistsAsync(source, identity))
+            var packageResultBeforePush = await GetPackageAsync(source, identity);
+            if (packageResultBeforePush.StatusCode == HttpStatusCode.OK)
             {
                 return new ConditionalPushResult
                 {
-                    PushAttempted = false,
+                    PackageAlreadyExists = true,
+                    PackageResult = packageResultBeforePush,
                 };
             }
 
@@ -52,11 +47,12 @@ namespace Knapcode.NuGetProtocol.V2
             var pushStatusCode = await PushPackageAsync(source, package);
             var timeToPush = stopwatch.Elapsed;
             var packageStatusCode = HttpStatusCode.NotFound;
+            HttpResult<PackageEntry> packageResultAfterPush = null;
             while (packageStatusCode == HttpStatusCode.NotFound &&
                    stopwatch.Elapsed < TimeSpan.FromMinutes(20))
             {
-                var fetchedPackage = await GetPackageAsync(source, identity);
-                packageStatusCode = fetchedPackage.StatusCode;
+                packageResultAfterPush = await GetPackageAsync(source, identity);
+                packageStatusCode = packageResultAfterPush.StatusCode;
                 if (packageStatusCode == HttpStatusCode.NotFound)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(1));
@@ -65,9 +61,10 @@ namespace Knapcode.NuGetProtocol.V2
 
             return new ConditionalPushResult
             {
-                PushAttempted = true,
-                PackageExists = packageStatusCode == HttpStatusCode.OK,
-                StatusCode = pushStatusCode,
+                PackageAlreadyExists = false,
+                PackageResult = packageResultAfterPush,
+                PackagePushSuccessfully = packageStatusCode == HttpStatusCode.OK,
+                PushStatusCode = pushStatusCode,
                 TimeToPush = timeToPush,
                 TimeToBeAvailable = packageStatusCode == HttpStatusCode.OK ? stopwatch.Elapsed : (TimeSpan?)null,
             };

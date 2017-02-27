@@ -37,7 +37,7 @@ namespace Knapcode.NuGetProtocol.Sandbox
                 var parser = new Parser();
                 var protocol = new Protocol(httpClient, parser);
                 var client = new Client(protocol, packageReader);
-                var test = new ComparePropertiesTest(packageSourceProvider, packageReader, testData, client);
+                var test = new PropertyComparisonTest(packageSourceProvider, packageReader, testData, client);
 
                 await test.ExecuteAsync();
             }

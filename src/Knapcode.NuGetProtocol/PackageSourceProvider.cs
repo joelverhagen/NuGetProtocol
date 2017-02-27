@@ -17,6 +17,7 @@ namespace Knapcode.NuGetProtocol
             if (_options.Value.NuGetGalleryV2SourceUri != null)
             {
                 yield return new PackageSource(
+                    PackageSourceType.NuGetGallery,
                     _options.Value.NuGetGalleryV2SourceUri,
                     _options.Value.NuGetGalleryV2PushUri,
                     new NoAuthorization(),
@@ -26,6 +27,7 @@ namespace Knapcode.NuGetProtocol
             if (_options.Value.MyGetV2SourceUri != null)
             {
                 yield return new PackageSource(
+                    PackageSourceType.MyGet,
                     _options.Value.MyGetV2SourceUri,
                     _options.Value.MyGetV2PushUri,
                     new NoAuthorization(),
@@ -35,6 +37,7 @@ namespace Knapcode.NuGetProtocol
             if (_options.Value.VstsV2SourceUri != null)
             {
                 yield return new PackageSource(
+                    PackageSourceType.Vsts,
                     _options.Value.VstsV2SourceUri,
                     _options.Value.VstsV2PushUri,
                     new BasicAuthorization("PAT", _options.Value.VstsReadPersonalAccessToken),
@@ -46,6 +49,7 @@ namespace Knapcode.NuGetProtocol
             if (_options.Value.NuGetServerWcfSourceUri != null)
             {
                 yield return new PackageSource(
+                    PackageSourceType.NuGetServerWcf,
                     _options.Value.NuGetServerWcfSourceUri,
                     _options.Value.NuGetServerWcfPushUri,
                     new NoAuthorization(),
@@ -55,6 +59,7 @@ namespace Knapcode.NuGetProtocol
             if (_options.Value.NuGetServerWebApiSourceUri != null)
             {
                 yield return new PackageSource(
+                    PackageSourceType.NuGetServerWebApi,
                     _options.Value.NuGetServerWebApiSourceUri,
                     _options.Value.NuGetServerWebApiPushUri,
                     new NoAuthorization(),
