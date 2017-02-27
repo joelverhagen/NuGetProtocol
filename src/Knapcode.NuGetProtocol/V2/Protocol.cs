@@ -21,9 +21,9 @@ namespace Knapcode.NuGetProtocol.V2
 
         public async Task<HttpStatusCode> PushPackageAsync(PackageSource source, Stream package)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Put, source.Uri))
+            using (var request = new HttpRequestMessage(HttpMethod.Put, source.PushUri))
             {
-                source.FeedAuthorization.Authenticate(request);
+                source.PushAuthorization.Authenticate(request);
 
                 var content = new MultipartFormDataContent();
                 request.Content = content;
@@ -43,29 +43,33 @@ namespace Knapcode.NuGetProtocol.V2
 
         public async Task<HttpResult<PackageEntry>> GetPackageAsync(PackageSource source, PackageIdentity package)
         {
-            var uri = $"{source.Uri}/Packages(Id='{Uri.EscapeDataString(package.Id)}',Version='{Uri.EscapeDataString(package.Version)})";
+            var uri = $"{source.SourceUri}/Packages(Id='{Uri.EscapeDataString(package.Id)}',Version='{Uri.EscapeDataString(package.Version)}')";
 
             using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
-            using (var response = await _httpClient.SendAsync(request))
             {
-                VerifyStatusCode(response, HttpStatusCode.OK, HttpStatusCode.NotFound);
+                source.SourceAuthorization.Authenticate(request);
 
-                var output = new HttpResult<PackageEntry>
+                using (var response = await _httpClient.SendAsync(request))
                 {
-                    StatusCode = response.StatusCode,
-                };
+                    VerifyStatusCode(response, HttpStatusCode.OK, HttpStatusCode.NotFound);
 
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
+                    var output = new HttpResult<PackageEntry>
+                    {
+                        StatusCode = response.StatusCode,
+                    };
+
+                    if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        return output;
+                    }
+
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    {
+                        output.Data = await _packageParser.ParsePackageEntryAsync(stream);
+                    }
+
                     return output;
                 }
-
-                using (var stream = await response.Content.ReadAsStreamAsync())
-                {
-                    output.Data = await _packageParser.ParsePackageEntryAsync(stream);
-                }
-
-                return output;
             }
         }
 

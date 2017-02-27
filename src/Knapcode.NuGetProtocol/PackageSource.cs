@@ -2,13 +2,23 @@
 {
     public class PackageSource
     {
-        public PackageSource(string uri, IFeedAuthorization auth)
+        public PackageSource(string sourceUri, string pushUri, IFeedAuthorization sourceAuth, IFeedAuthorization pushAuth)
         {
-            Uri = uri;
-            FeedAuthorization = auth;
+            SourceUri = sourceUri;
+            PushUri = pushUri;
+            SourceAuthorization = sourceAuth;
+            PushAuthorization = pushAuth;
+
         }
         
-        public string Uri { get; set; }
-        public IFeedAuthorization FeedAuthorization { get; set; }
+        public string SourceUri { get; }
+        public string PushUri { get; }
+        public IFeedAuthorization SourceAuthorization { get; }
+        public IFeedAuthorization PushAuthorization { get; }
+
+        public override string ToString()
+        {
+            return SourceUri;
+        }
     }
 }
