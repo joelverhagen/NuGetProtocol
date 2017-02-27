@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Knapcode.NuGetProtocol.V2;
 using Knapcode.NuGetProtocol.V2.Tests;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Knapcode.NuGetProtocol.Sandbox
@@ -27,7 +28,11 @@ namespace Knapcode.NuGetProtocol.Sandbox
             var packageSourceProvider = new PackageSourceProvider(options);
             var packageReader = new PackageReader();
             var testData = TestData.InitializeFromRepository();
-            using (var httpClient = new HttpClient())
+            var httpClientHandler = new HttpClientHandler();
+            var loggerFactory = new LoggerFactory();
+            loggerFactory.AddConsole();
+            var loggingHttpHandler = new LoggingHttpHandler(httpClientHandler, loggerFactory.CreateLogger<LoggingHttpHandler>());
+            using (var httpClient = new HttpClient(loggingHttpHandler))
             {
                 var parser = new Parser();
                 var protocol = new Protocol(httpClient, parser);
