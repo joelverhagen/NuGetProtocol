@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Knapcode.NuGetProtocol.V2;
@@ -6,6 +8,8 @@ using Knapcode.NuGetProtocol.V2.Tests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Knapcode.NuGetProtocol.Sandbox
 {
@@ -39,7 +43,18 @@ namespace Knapcode.NuGetProtocol.Sandbox
                 var client = new Client(protocol, packageReader);
                 var test = new PropertyComparisonTest(packageSourceProvider, packageReader, testData, client);
 
-                await test.ExecuteAsync();
+                var sources = packageSourceProvider.GetPackageSouces().ToList();
+
+                // await protocol.GetMetadataAsync(sources.Last());
+                var result = await test.ExecuteAsync();
+                Console.WriteLine(JsonConvert.SerializeObject(result, new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented,
+                    Converters =
+                    {
+                        new StringEnumConverter()
+                    }
+                }));
             }
         }
     }

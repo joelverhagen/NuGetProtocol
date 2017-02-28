@@ -4,6 +4,6 @@ namespace Knapcode.NuGetProtocol.V2
 {
     public class PackageEntry
     {
-        public HashSet<string> PropertyNames { get; set; }
+        public List<string> PropertyNames { get; set; }
     }
 }

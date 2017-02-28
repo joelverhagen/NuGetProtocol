@@ -11,12 +11,32 @@ namespace Knapcode.NuGetProtocol.V2
     public class Protocol
     {
         private readonly HttpClient _httpClient;
-        private readonly Parser _packageParser;
+        private readonly Parser _parser;
 
-        public Protocol(HttpClient httpClient, Parser v2Parser)
+        public Protocol(HttpClient httpClient, Parser parser)
         {
             _httpClient = httpClient;
-            _packageParser = v2Parser;
+            _parser = parser;
+        }
+
+        public async Task<Metadata> GetMetadataAsync(PackageSource source)
+        {
+            var uri = $"{source.SourceUri}/$metadata";
+
+            using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
+            {
+                source.SourceAuthorization.Authenticate(request);
+
+                using (var response = await _httpClient.SendAsync(request))
+                {
+                    VerifyStatusCode(response, HttpStatusCode.OK);
+
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    {
+                        return await _parser.ParseMetadataAsync(stream);
+                    }
+                }
+            }
         }
 
         public async Task<HttpStatusCode> PushPackageAsync(PackageSource source, Stream package)
@@ -65,7 +85,7 @@ namespace Knapcode.NuGetProtocol.V2
 
                     using (var stream = await response.Content.ReadAsStreamAsync())
                     {
-                        output.Data = await _packageParser.ParsePackageEntryAsync(stream);
+                        output.Data = await _parser.ParsePackageEntryAsync(stream);
                     }
 
                     return output;

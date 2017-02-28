@@ -17,6 +17,11 @@ namespace Knapcode.NuGetProtocol.V2
             _packageReader = packageReader;
         }
 
+        public async Task<Metadata> GetMetadataAsync(PackageSource source)
+        {
+            return await _protocol.GetMetadataAsync(source);
+        }
+
         public async Task<HttpStatusCode> PushPackageAsync(PackageSource source, Stream package)
         {
             return await _protocol.PushPackageAsync(source, package);
