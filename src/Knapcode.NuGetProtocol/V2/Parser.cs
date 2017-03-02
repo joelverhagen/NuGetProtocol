@@ -26,12 +26,7 @@ namespace Knapcode.NuGetProtocol.V2
 
         private static readonly XName _xnameFeed = XName.Get("feed", Atom);
         private static readonly XName _xnameEntry = XName.Get("entry", Atom);
-        private static readonly XName _xnameAuthor = XName.Get("author", Atom);
-        private static readonly XName _xnameContent = XName.Get("content", Atom);
         private static readonly XName _xnameLink = XName.Get("link", Atom);
-        private static readonly XName _xnameName = XName.Get("name", Atom);
-        private static readonly XName _xnameSummary = XName.Get("summary", Atom);
-        private static readonly XName _xnameTitle = XName.Get("title", Atom);
 
         private class EdmXNames
         {
