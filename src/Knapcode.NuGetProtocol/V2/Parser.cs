@@ -11,14 +11,14 @@ namespace Knapcode.NuGetProtocol.V2
     public class Parser
     {
         private const string Edmx = "http://schemas.microsoft.com/ado/2007/06/edmx";
-        
+
         private const string Atom = "http://www.w3.org/2005/Atom";
         private const string Metadata = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata";
         private const string DataServices = "http://schemas.microsoft.com/ado/2007/08/dataservices";
 
         private static readonly XName _xnameEdmx = XName.Get("Edmx", Edmx);
         private static readonly XName _xnameDataServices = XName.Get("DataServices", Edmx);
-        
+
         private static readonly XName _xnameTargetPath = XName.Get("FC_TargetPath", Metadata);
         private static readonly XName _xnameContentKind = XName.Get("FC_ContentKind", Metadata);
         private static readonly XName _xnameKeepInContent = XName.Get("FC_KeepInContent", Metadata);
@@ -45,7 +45,7 @@ namespace Knapcode.NuGetProtocol.V2
 
             public static EdmXNames Edm200604 => _200604;
             public static EdmXNames Edm200911 => _200911;
-       
+
             public static EdmXNames GetInstance(string ns)
             {
                 return _instances[ns];
@@ -168,40 +168,61 @@ namespace Knapcode.NuGetProtocol.V2
             };
         }
 
-        private PackageEntry ParsePackage(XElement element)
+        private PackageEntry ParsePackage(XElement entry)
         {
-            var downloadUrl = element
-                .Element(_xnameContent)
-                .Attribute("src")
-                .Value;
-
-            var title = element
-                .Element(_xnameTitle)?
-                .Value;
-
-            var summary = element
-                .Element(_xnameSummary)?
-                .Value;
-
-            var authors = element
-                .Element(_xnameAuthor)?
-                .Elements(_xnameName)
-                .Select(e => e.Value)
-                .ToList();
-
-            var propertyNames = element
+            var propertyPairs = entry
                 .Element(_xnameProperties)
-                .Descendants()
+                .Elements()
                 .Where(x => x.Name.NamespaceName == DataServices)
-                .Select(x => x.Name.LocalName)
+                .Select(x => new KeyValuePair<string, string>(x.Name.LocalName, x.Value))
+                .ToList();
+            
+            var atomPairs = entry
+                .Elements()
+                .Where(x => x.Name.NamespaceName == Atom)
+                .SelectMany(GetAtomPairs)
                 .ToList();
 
             return new PackageEntry
             {
-                PropertyNames = propertyNames,
+                AtomPairs = atomPairs,
+                PropertyPairs = propertyPairs,
             };
         }
         
+        private static IEnumerable<KeyValuePair<string, string>> GetAtomPairs(XElement el)
+        {
+            if (el.Name.NamespaceName != Atom)
+            {
+                yield break;
+            }
+
+            switch (el.Name.LocalName)
+            {
+                case Constants.AuthorPath:
+                    yield return new KeyValuePair<string, string>(Constants.AuthorNamePath, el.Element("name")?.Value);
+                    break;
+                case Constants.CategoryPath:
+                    yield return new KeyValuePair<string, string>(Constants.CategoryTermPath, el.Attribute("term")?.Value);
+                    break;
+                case Constants.ContentPath:
+                    yield return new KeyValuePair<string, string>(Constants.ContentSrcPath, el.Attribute("src")?.Value);
+                    yield return new KeyValuePair<string, string>(Constants.ContentTypePath, el.Attribute("type")?.Value);
+                    break;
+                case Constants.LinkPath:
+                    break;
+                case Constants.IdPath:
+                case Constants.PublishedPath:
+                case Constants.SummaryPath:
+                case Constants.TitlePath:
+                case Constants.UpdatedPath:
+                    yield return new KeyValuePair<string, string>(el.Name.LocalName, el.Value);
+                    break;
+                default:
+                    throw new NotSupportedException($"The Atom element '{el.Name.LocalName}' is not supported.");
+            }
+        }
+
         private string GetNextUrl(XDocument doc)
         {
             return (from e in doc.Root.Elements(_xnameLink)

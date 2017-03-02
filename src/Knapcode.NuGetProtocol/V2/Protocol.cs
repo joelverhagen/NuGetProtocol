@@ -54,7 +54,7 @@ namespace Knapcode.NuGetProtocol.V2
 
                 using (var response = await _httpClient.SendAsync(request))
                 {
-                    VerifyStatusCode(response, HttpStatusCode.Created);
+                    VerifyStatusCode(response, HttpStatusCode.Created, HttpStatusCode.Accepted);
 
                     return response.StatusCode;
                 }

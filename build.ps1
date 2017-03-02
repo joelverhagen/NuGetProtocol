@@ -21,3 +21,6 @@ if (-Not (Test-Path $artifactDir)) {
 
 $knpaNuspec = Join-Path $PSScriptRoot -ChildPath "src" | Join-Path -ChildPath "K.Np.A" | Join-Path -ChildPath "K.Np.A.nuspec"
 & $nuget pack $knpaNuspec -OutputDirectory $artifactDir
+
+$knpbNuspec = Join-Path $PSScriptRoot -ChildPath "src" | Join-Path -ChildPath "K.Np.B" | Join-Path -ChildPath "K.Np.B.nuspec"
+& $nuget pack $knpbNuspec -OutputDirectory $artifactDir

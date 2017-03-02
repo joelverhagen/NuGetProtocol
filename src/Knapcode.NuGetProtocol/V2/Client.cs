@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -8,6 +9,9 @@ namespace Knapcode.NuGetProtocol.V2
 {
     public class Client
     {
+        private static readonly ConcurrentDictionary<string, Task<Metadata>> _metadata
+            = new ConcurrentDictionary<string, Task<Metadata>>();
+
         private readonly Protocol _protocol;
         private readonly PackageReader _packageReader;
 
@@ -19,7 +23,9 @@ namespace Knapcode.NuGetProtocol.V2
 
         public async Task<Metadata> GetMetadataAsync(PackageSource source)
         {
-            return await _protocol.GetMetadataAsync(source);
+            return await _metadata.GetOrAdd(
+                source.SourceUri,
+                _ => _protocol.GetMetadataAsync(source));
         }
 
         public async Task<HttpStatusCode> PushPackageAsync(PackageSource source, Stream package)

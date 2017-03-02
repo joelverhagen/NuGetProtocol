@@ -46,7 +46,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
         public Dictionary<string, Dictionary<string, HashSet<PackageSourceType>>> DifferingPropertyTypes { get; set; }
 
         /// <summary>
-        /// The types for properties that are the same on all package source types. The key is the property name the
+        /// The types for properties that are the same on all package source types. The key is the property name. The
         /// value is the property type.
         /// </summary>
         public Dictionary<string, string> PropertyTypes { get; set; }
@@ -58,9 +58,21 @@ namespace Knapcode.NuGetProtocol.V2.Tests
         public Dictionary<string, Dictionary<bool, HashSet<PackageSourceType>>> DifferingNullability { get; set; }
 
         /// <summary>
-        /// The nullability for properties that are the same on all package source types. The key is the property name
-        /// the value is the nullability.
+        /// The nullability for properties that are the same on all package source types. The key is the property name.
+        /// The value is the nullability.
         /// </summary>
         public Dictionary<string, bool> Nullability { get; set; }
+
+        /// <summary>
+        /// Whether or not value should be kept in content when the setting varies from one source to the next. The
+        /// first key is the property name. The second key is whether or not to keep the property in content.
+        /// </summary>
+        public Dictionary<string, Dictionary<bool, HashSet<PackageSourceType>>> DifferingKeepInContent { get; set; }
+
+        /// <summary>
+        /// Whether or not value should be kept in content when the setting is the same on all package source types.
+        /// The key is the property name. The value is whether or not to keep the property in content.
+        /// </summary>
+        public Dictionary<string, bool> KeepInContent { get; set; }
     }
 }

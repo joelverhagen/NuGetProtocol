@@ -48,5 +48,11 @@ namespace Knapcode.NuGetProtocol
             FileMode.Open,
             FileAccess.Read,
             FileShare.Read);
+
+        public Stream PackageKNpB => new FileStream(
+            Path.Combine(_directory, "K.Np.B.1.0.0-alpha1.nupkg"),
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read);
     }
 }

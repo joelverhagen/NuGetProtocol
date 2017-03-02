@@ -41,6 +41,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                             PackageSourceTypeToPropertyType = new Dictionary<PackageSourceType, string>(),
                             PackageSourceTypeToTargetPath = new Dictionary<PackageSourceType, string>(),
                             PackageSourceToAppearsInPackage = new Dictionary<PackageSourceType, bool>(),
+                            PackageSourceTypeToKeepInContent = new Dictionary<PackageSourceType, bool>(),
                         };
                         propertyNameToData[entityProperty.Name] = data;
                     }
@@ -48,10 +49,11 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                     data.PackageSourceTypeToNullable[source.Type] = entityProperty.Nullable;
                     data.PackageSourceTypeToPropertyType[source.Type] = entityProperty.Type;
                     data.PackageSourceTypeToTargetPath[source.Type] = entityProperty.TargetPath;
+                    data.PackageSourceTypeToKeepInContent[source.Type] = entityProperty.KeepInContent;
                     data.PackageSourceToAppearsInPackage[source.Type] = false;
                 }
 
-                using (var stream = _testData.PackageKNpA)
+                using (var stream = _testData.PackageKNpB)
                 {
                     var identity = _packageReader.GetPackageIdentity(stream);
                     stream.Position = 0;
@@ -62,16 +64,16 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                         throw new InvalidOperationException("The package was not pushed successfully.");
                     }
 
-                    foreach (var propertyName in pushResult.PackageResult.Data.PropertyNames)
+                    foreach (var pair in pushResult.PackageResult.Data.PropertyPairs)
                     {
                         PropertyData propertyData;
-                        if (!propertyNameToData.TryGetValue(propertyName, out propertyData))
+                        if (!propertyNameToData.TryGetValue(pair.Key, out propertyData))
                         {
                             propertyData = new PropertyData
                             {
                                 PackageSourceToAppearsInPackage = new Dictionary<PackageSourceType, bool>(),
                             };
-                            propertyNameToData[propertyName] = propertyData;
+                            propertyNameToData[pair.Key] = propertyData;
                         }
 
                         propertyData.PackageSourceToAppearsInPackage[source.Type] = true;
@@ -86,6 +88,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
             var targetPaths = new Dictionary<string, Dictionary<string, HashSet<PackageSourceType>>>();
             var propertyTypes = new Dictionary<string, Dictionary<string, HashSet<PackageSourceType>>>();
             var nullability = new Dictionary<string, Dictionary<bool, HashSet<PackageSourceType>>>();
+            var keepInContent = new Dictionary<string, Dictionary<bool, HashSet<PackageSourceType>>>();
 
             foreach (var propertyName in propertyNameToData.Keys.ToList())
             {
@@ -122,6 +125,11 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                     nullability,
                     propertyName,
                     propertyNameToData[propertyName].PackageSourceTypeToNullable);
+
+                GroupByValue(
+                    keepInContent,
+                    propertyName,
+                    propertyNameToData[propertyName].PackageSourceTypeToKeepInContent);
             }
 
             var output = new PropertyComparison
@@ -136,6 +144,8 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                 PropertyTypes = GetConsistent(propertyTypes),
                 DifferingNullability = GetDiffering(nullability),
                 Nullability = GetConsistent(nullability),
+                DifferingKeepInContent = GetDiffering(keepInContent),
+                KeepInContent = GetConsistent(keepInContent),
             };
 
             return output;
@@ -210,6 +220,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
             public Dictionary<PackageSourceType, bool> PackageSourceTypeToNullable { get; set; }
             public Dictionary<PackageSourceType, string> PackageSourceTypeToTargetPath { get; set; }
             public Dictionary<PackageSourceType, bool> PackageSourceToAppearsInPackage { get; set; }
+            public Dictionary<PackageSourceType, bool> PackageSourceTypeToKeepInContent { get; set; }
         }
     }
 }
