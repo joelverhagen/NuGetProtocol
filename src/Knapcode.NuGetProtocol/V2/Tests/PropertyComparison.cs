@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Knapcode.NuGetProtocol.Shared;
 
 namespace Knapcode.NuGetProtocol.V2.Tests
 {

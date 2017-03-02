@@ -1,7 +1,7 @@
 ﻿using NuGet.Packaging;
 using System.IO;
 
-namespace Knapcode.NuGetProtocol
+namespace Knapcode.NuGetProtocol.Shared
 {
     public class PackageReader
     {

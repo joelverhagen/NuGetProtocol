@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 
-namespace Knapcode.NuGetProtocol
+namespace Knapcode.NuGetProtocol.Shared
 {
     public interface IFeedAuthorization
     {

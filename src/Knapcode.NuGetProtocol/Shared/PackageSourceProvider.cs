@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 
-namespace Knapcode.NuGetProtocol
+namespace Knapcode.NuGetProtocol.Shared
 {
     public class PackageSourceProvider
     {

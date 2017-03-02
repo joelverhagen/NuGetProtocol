@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using Knapcode.NuGetProtocol.Shared;
 
 namespace Knapcode.NuGetProtocol.V2
 {

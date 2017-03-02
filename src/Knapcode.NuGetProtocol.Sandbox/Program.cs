@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Knapcode.NuGetProtocol.Shared;
 using Knapcode.NuGetProtocol.V2;
 using Knapcode.NuGetProtocol.V2.Tests;
 using Microsoft.Extensions.Configuration;

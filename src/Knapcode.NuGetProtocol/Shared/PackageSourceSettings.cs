@@ -1,4 +1,4 @@
-﻿namespace Knapcode.NuGetProtocol
+﻿namespace Knapcode.NuGetProtocol.Shared
 {
     public class PackageSourceSettings
     {

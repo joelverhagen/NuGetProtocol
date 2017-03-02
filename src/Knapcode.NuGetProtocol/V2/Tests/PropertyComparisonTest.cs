@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Knapcode.NuGetProtocol.Shared;
 
 namespace Knapcode.NuGetProtocol.V2.Tests
 {

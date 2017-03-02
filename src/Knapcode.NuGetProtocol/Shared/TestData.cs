@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Knapcode.NuGetProtocol
+namespace Knapcode.NuGetProtocol.Shared
 {
     public class TestData
     {
