@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Knapcode.NuGetProtocol.Reporting;
 using Knapcode.NuGetProtocol.Shared;
 using Knapcode.NuGetProtocol.V2;
 using Knapcode.NuGetProtocol.V2.Tests;
@@ -44,7 +46,9 @@ namespace Knapcode.NuGetProtocol.Sandbox
                 var client = new Client(protocol, packageReader);
                 var test = new PropertyComparisonTest(packageSourceProvider, packageReader, testData, client);
 
-                var sources = packageSourceProvider.GetPackageSouces().ToList();
+                var sources = packageSourceProvider
+                    .GetPackageSouces()
+                    .ToList();
 
                 // await protocol.GetMetadataAsync(sources.Last());
                 var result = await test.ExecuteAsync();
@@ -56,6 +60,14 @@ namespace Knapcode.NuGetProtocol.Sandbox
                         new StringEnumConverter()
                     }
                 }));
+
+                var abbreviation = new Abbreviations();
+                var markdownTableWriter = new MarkdownTableWriter();
+                var report = new PropertyComparisonWriter(abbreviation, markdownTableWriter);
+                var sb = new StringBuilder();
+                report.Write(sb, result);
+
+                Console.WriteLine(sb.ToString());
             }
         }
     }
