@@ -41,7 +41,6 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                             PackageSourceTypeToNullable = new Dictionary<PackageSourceType, bool>(),
                             PackageSourceTypeToPropertyType = new Dictionary<PackageSourceType, string>(),
                             PackageSourceTypeToTargetPath = new Dictionary<PackageSourceType, string>(),
-                            PackageSourceToAppearsInPackage = new Dictionary<PackageSourceType, bool>(),
                             PackageSourceTypeToKeepInContent = new Dictionary<PackageSourceType, bool>(),
                         };
                         propertyNameToData[entityProperty.Name] = data;
@@ -51,34 +50,6 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                     data.PackageSourceTypeToPropertyType[source.Type] = entityProperty.Type;
                     data.PackageSourceTypeToTargetPath[source.Type] = entityProperty.TargetPath;
                     data.PackageSourceTypeToKeepInContent[source.Type] = entityProperty.KeepInContent;
-                    data.PackageSourceToAppearsInPackage[source.Type] = false;
-                }
-
-                using (var stream = _testData.PackageKNpB)
-                {
-                    var identity = _packageReader.GetPackageIdentity(stream);
-                    stream.Position = 0;
-
-                    var pushResult = await _client.PushPackageIfNotExistsAsync(source, stream);
-                    if (pushResult.PackageResult.Data == null)
-                    {
-                        throw new InvalidOperationException("The package was not pushed successfully.");
-                    }
-
-                    foreach (var pair in pushResult.PackageResult.Data.PropertyPairs)
-                    {
-                        PropertyData propertyData;
-                        if (!propertyNameToData.TryGetValue(pair.Key, out propertyData))
-                        {
-                            propertyData = new PropertyData
-                            {
-                                PackageSourceToAppearsInPackage = new Dictionary<PackageSourceType, bool>(),
-                            };
-                            propertyNameToData[pair.Key] = propertyData;
-                        }
-
-                        propertyData.PackageSourceToAppearsInPackage[source.Type] = true;
-                    }
                 }
             }
 
@@ -108,7 +79,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                     directPropertiesOnSomeTypes,
                     propertyName,
                     propertyNameToData[propertyName]
-                        .PackageSourceToAppearsInPackage
+                        .PackageSourceTypeToKeepInContent
                         .Where(x => x.Value)
                         .Select(x => x.Key));
 
@@ -220,7 +191,6 @@ namespace Knapcode.NuGetProtocol.V2.Tests
             public Dictionary<PackageSourceType, string> PackageSourceTypeToPropertyType { get; set; }
             public Dictionary<PackageSourceType, bool> PackageSourceTypeToNullable { get; set; }
             public Dictionary<PackageSourceType, string> PackageSourceTypeToTargetPath { get; set; }
-            public Dictionary<PackageSourceType, bool> PackageSourceToAppearsInPackage { get; set; }
             public Dictionary<PackageSourceType, bool> PackageSourceTypeToKeepInContent { get; set; }
         }
     }
