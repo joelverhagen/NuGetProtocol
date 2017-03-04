@@ -6,14 +6,14 @@ using Knapcode.NuGetProtocol.Shared;
 
 namespace Knapcode.NuGetProtocol.V2.Tests
 {
-    public class PropertyComparisonTest
+    public class SchemaComparisonTest
     {
         private readonly PackageSourceProvider _packageSourceProvider;
         private readonly PackageReader _packageReader;
         private readonly TestData _testData;
         private readonly Client _client;
 
-        public PropertyComparisonTest(PackageSourceProvider packageSourceProvider, PackageReader packageReader, TestData testData, Client client)
+        public SchemaComparisonTest(PackageSourceProvider packageSourceProvider, PackageReader packageReader, TestData testData, Client client)
         {
             _packageSourceProvider = packageSourceProvider;
             _packageReader = packageReader;
@@ -21,7 +21,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
             _client = client;
         }
 
-        public async Task<PropertyComparison> ExecuteAsync()
+        public async Task<SchemaComparison> ExecuteAsync()
         {
             var allTypes = new HashSet<PackageSourceType>();
             var propertyNameToData = new Dictionary<string, PropertyData>();
@@ -107,7 +107,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                     propertyNameToData[propertyName].PackageSourceTypeToKeepInContent);
             }
 
-            var output = new PropertyComparison
+            var output = new SchemaComparison
             {
                 AllTypes = allTypes,
                 PropertiesOnAllTypes = propertiesOnAllTypes,

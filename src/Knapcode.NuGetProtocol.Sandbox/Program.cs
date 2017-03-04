@@ -44,7 +44,7 @@ namespace Knapcode.NuGetProtocol.Sandbox
                 var parser = new Parser();
                 var protocol = new Protocol(httpClient, parser);
                 var client = new Client(protocol, packageReader);
-                var test = new PropertyComparisonTest(packageSourceProvider, packageReader, testData, client);
+                var test = new SchemaComparisonTest(packageSourceProvider, packageReader, testData, client);
 
                 var sources = packageSourceProvider
                     .GetPackageSouces()
@@ -63,7 +63,7 @@ namespace Knapcode.NuGetProtocol.Sandbox
 
                 var abbreviation = new Abbreviations();
                 var markdownTableWriter = new MarkdownTableWriter();
-                var report = new PropertyComparisonWriter(abbreviation, markdownTableWriter);
+                var report = new SchemaComparisonWriter(abbreviation, markdownTableWriter);
                 var sb = new StringBuilder();
                 report.Write(sb, result);
 

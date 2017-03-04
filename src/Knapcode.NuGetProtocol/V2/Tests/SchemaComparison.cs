@@ -3,7 +3,7 @@ using Knapcode.NuGetProtocol.Shared;
 
 namespace Knapcode.NuGetProtocol.V2.Tests
 {
-    public class PropertyComparison
+    public class SchemaComparison
     {
         /// <summary>
         /// All of the package source types evaluated.

@@ -6,7 +6,7 @@ using Knapcode.NuGetProtocol.V2.Tests;
 
 namespace Knapcode.NuGetProtocol.Reporting
 {
-    public class PropertyComparisonWriter
+    public class SchemaComparisonWriter
     {
         private static readonly Dictionary<string, string> TargetPathToDisplay = new Dictionary<string, string>
         {
@@ -20,13 +20,13 @@ namespace Knapcode.NuGetProtocol.Reporting
         private readonly Abbreviations _abbreviations;
         private readonly MarkdownTableWriter _markdownTableWriter;
 
-        public PropertyComparisonWriter(Abbreviations abbreviations, MarkdownTableWriter markdownTableWriter)
+        public SchemaComparisonWriter(Abbreviations abbreviations, MarkdownTableWriter markdownTableWriter)
         {
             _abbreviations = abbreviations;
             _markdownTableWriter = markdownTableWriter;
         }
 
-        public void Write(StringBuilder sb, PropertyComparison data)
+        public void Write(StringBuilder sb, SchemaComparison data)
         {
             sb.AppendLine("### Properties from `<m:properties>`");
             sb.AppendLine();
