@@ -6,6 +6,12 @@ namespace Knapcode.NuGetProtocol.V2
 {
     public static class Constants
     {
+        public const string SyndicationAuthorName = "SyndicationAuthorName";
+        public const string SyndicationPublished = "SyndicationPublished";
+        public const string SyndicationSummary = "SyndicationSummary";
+        public const string SyndicationTitle = "SyndicationTitle";
+        public const string SyndicationUpdated = "SyndicationUpdated";
+
         public const string AuthorNamePath = "author/name";
         public const string AuthorPath = "author";
         public const string CategoryPath = "category";

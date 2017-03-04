@@ -61,11 +61,11 @@ namespace Knapcode.NuGetProtocol.V2
          */
         private static readonly Dictionary<string, string> TargetPathToChildPath = new Dictionary<string, string>
         {
-            { "SyndicationAuthorName", Constants.AuthorNamePath },
-            { "SyndicationPublished", Constants.PublishedPath },
-            { "SyndicationSummary", Constants.SummaryPath },
-            { "SyndicationTitle", Constants.TitlePath },
-            { "SyndicationUpdated", Constants.UpdatedPath },
+            { Constants.SyndicationAuthorName, Constants.AuthorNamePath },
+            { Constants.SyndicationPublished, Constants.PublishedPath },
+            { Constants.SyndicationSummary, Constants.SummaryPath },
+            { Constants.SyndicationTitle, Constants.TitlePath },
+            { Constants.SyndicationUpdated, Constants.UpdatedPath },
         };
 
         public Package GetPackage(Metadata metadata, PackageEntry entry)

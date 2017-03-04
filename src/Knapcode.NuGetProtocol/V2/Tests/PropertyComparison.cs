@@ -38,7 +38,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
         /// Properties that use target paths (i.e. children of the Atom <code>&lt;entry&gt;</code> element). The first
         /// key is the property name. The second key is the target path.
         /// </summary>
-        public Dictionary<string, Dictionary<string, HashSet<PackageSourceType>>> TargetPaths { get; set; }
+        public Dictionary<string, Dictionary<string, HashSet<PackageSourceType>>> OnlyUsesTargetPaths { get; set; }
 
         /// <summary>
         /// The types for properties that vary from one source to the next. The first key is the property name. The

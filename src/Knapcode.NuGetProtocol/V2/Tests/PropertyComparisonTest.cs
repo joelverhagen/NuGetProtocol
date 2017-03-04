@@ -40,7 +40,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                         {
                             PackageSourceTypeToNullable = new Dictionary<PackageSourceType, bool>(),
                             PackageSourceTypeToPropertyType = new Dictionary<PackageSourceType, string>(),
-                            PackageSourceTypeToTargetPath = new Dictionary<PackageSourceType, string>(),
+                            PackageSourceTypeToOnlyUsesTargetPath = new Dictionary<PackageSourceType, string>(),
                             PackageSourceTypeToKeepInContent = new Dictionary<PackageSourceType, bool>(),
                         };
                         propertyNameToData[entityProperty.Name] = data;
@@ -48,7 +48,10 @@ namespace Knapcode.NuGetProtocol.V2.Tests
 
                     data.PackageSourceTypeToNullable[source.Type] = entityProperty.Nullable;
                     data.PackageSourceTypeToPropertyType[source.Type] = entityProperty.Type;
-                    data.PackageSourceTypeToTargetPath[source.Type] = entityProperty.TargetPath;
+                    if (entityProperty.TargetPath != null && !entityProperty.KeepInContent)
+                    {
+                        data.PackageSourceTypeToOnlyUsesTargetPath[source.Type] = entityProperty.TargetPath;
+                    }
                     data.PackageSourceTypeToKeepInContent[source.Type] = entityProperty.KeepInContent;
                 }
             }
@@ -57,7 +60,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
             var propertiesOnSomeTypes = new Dictionary<string, HashSet<PackageSourceType>>();
             var directPropertiesOnAllTypes = new List<string>();
             var directPropertiesOnSomeTypes = new Dictionary<string, HashSet<PackageSourceType>>();
-            var targetPaths = new Dictionary<string, Dictionary<string, HashSet<PackageSourceType>>>();
+            var onlyUsesTargetPaths = new Dictionary<string, Dictionary<string, HashSet<PackageSourceType>>>();
             var propertyTypes = new Dictionary<string, Dictionary<string, HashSet<PackageSourceType>>>();
             var nullability = new Dictionary<string, Dictionary<bool, HashSet<PackageSourceType>>>();
             var keepInContent = new Dictionary<string, Dictionary<bool, HashSet<PackageSourceType>>>();
@@ -84,9 +87,9 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                         .Select(x => x.Key));
 
                 GroupByValue(
-                    targetPaths,
+                    onlyUsesTargetPaths,
                     propertyName,
-                    propertyNameToData[propertyName].PackageSourceTypeToTargetPath);
+                    propertyNameToData[propertyName].PackageSourceTypeToOnlyUsesTargetPath);
 
                 GroupByValue(
                     propertyTypes,
@@ -111,7 +114,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                 PropertiesOnSomeTypes = propertiesOnSomeTypes,
                 DirectPropertiesOnAllTypes = directPropertiesOnAllTypes,
                 DirectPropertiesOnSomeTypes = directPropertiesOnSomeTypes,
-                TargetPaths = targetPaths,
+                OnlyUsesTargetPaths = onlyUsesTargetPaths,
                 DifferingPropertyTypes = GetDiffering(propertyTypes),
                 PropertyTypes = GetConsistent(propertyTypes),
                 DifferingNullability = GetDiffering(nullability),
@@ -190,7 +193,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
         {
             public Dictionary<PackageSourceType, string> PackageSourceTypeToPropertyType { get; set; }
             public Dictionary<PackageSourceType, bool> PackageSourceTypeToNullable { get; set; }
-            public Dictionary<PackageSourceType, string> PackageSourceTypeToTargetPath { get; set; }
+            public Dictionary<PackageSourceType, string> PackageSourceTypeToOnlyUsesTargetPath { get; set; }
             public Dictionary<PackageSourceType, bool> PackageSourceTypeToKeepInContent { get; set; }
         }
     }
