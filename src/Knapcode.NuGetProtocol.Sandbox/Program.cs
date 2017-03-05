@@ -48,7 +48,15 @@ namespace Knapcode.NuGetProtocol.Sandbox
 
                 var propertyComparisonTest = new PropertyComparisonTest(packageSourceProvider, packageReader, testData, client, mapper);
                 var propertyComparison = await propertyComparisonTest.ExecuteAsync();
-                
+                Console.WriteLine(JsonConvert.SerializeObject(propertyComparison, new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented,
+                    Converters =
+                    {
+                        new StringEnumConverter()
+                    }
+                }));
+
                 var schemaComparisonTest = new SchemaComparisonTest(packageSourceProvider, client);
                 var schemaComparison = await schemaComparisonTest.ExecuteAsync();
                 Console.WriteLine(JsonConvert.SerializeObject(schemaComparison, new JsonSerializerSettings
