@@ -27,6 +27,7 @@ namespace Knapcode.NuGetProtocol.V2
         private static readonly XName _xnameFeed = XName.Get("feed", Atom);
         private static readonly XName _xnameEntry = XName.Get("entry", Atom);
         private static readonly XName _xnameLink = XName.Get("link", Atom);
+        private static readonly XName _xnameName = XName.Get("name", Atom);
 
         private class EdmXNames
         {
@@ -195,7 +196,7 @@ namespace Knapcode.NuGetProtocol.V2
             switch (el.Name.LocalName)
             {
                 case Constants.AuthorPath:
-                    yield return new KeyValuePair<string, string>(Constants.AuthorNamePath, el.Element("name")?.Value);
+                    yield return new KeyValuePair<string, string>(Constants.AuthorNamePath, el.Element(_xnameName)?.Value);
                     break;
                 case Constants.CategoryPath:
                     yield return new KeyValuePair<string, string>(Constants.CategoryTermPath, el.Attribute("term")?.Value);

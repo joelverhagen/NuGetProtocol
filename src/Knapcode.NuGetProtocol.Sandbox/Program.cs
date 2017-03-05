@@ -37,22 +37,21 @@ namespace Knapcode.NuGetProtocol.Sandbox
             var testData = TestData.InitializeFromRepository();
             var httpClientHandler = new HttpClientHandler();
             var loggerFactory = new LoggerFactory();
+            var parser = new Parser();
+            var mapper = new Mapper();
             loggerFactory.AddConsole();
             var loggingHttpHandler = new LoggingHttpHandler(httpClientHandler, loggerFactory.CreateLogger<LoggingHttpHandler>());
             using (var httpClient = new HttpClient(loggingHttpHandler))
             {
-                var parser = new Parser();
                 var protocol = new Protocol(httpClient, parser);
                 var client = new Client(protocol, packageReader);
-                var test = new SchemaComparisonTest(packageSourceProvider, packageReader, testData, client);
 
-                var sources = packageSourceProvider
-                    .GetPackageSouces()
-                    .ToList();
-
-                // await protocol.GetMetadataAsync(sources.Last());
-                var result = await test.ExecuteAsync();
-                Console.WriteLine(JsonConvert.SerializeObject(result, new JsonSerializerSettings
+                var propertyComparisonTest = new PropertyComparisonTest(packageSourceProvider, packageReader, testData, client, mapper);
+                var propertyComparison = await propertyComparisonTest.ExecuteAsync();
+                
+                var schemaComparisonTest = new SchemaComparisonTest(packageSourceProvider, client);
+                var schemaComparison = await schemaComparisonTest.ExecuteAsync();
+                Console.WriteLine(JsonConvert.SerializeObject(schemaComparison, new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented,
                     Converters =
@@ -65,7 +64,7 @@ namespace Knapcode.NuGetProtocol.Sandbox
                 var markdownTableWriter = new MarkdownTableWriter();
                 var report = new SchemaComparisonWriter(abbreviation, markdownTableWriter);
                 var sb = new StringBuilder();
-                report.Write(sb, result);
+                report.Write(sb, schemaComparison);
 
                 Console.WriteLine(sb.ToString());
             }

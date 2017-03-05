@@ -1,11 +1,13 @@
-﻿namespace Knapcode.NuGetProtocol.V2
+﻿using System.Collections.Generic;
+
+namespace Knapcode.NuGetProtocol.Shared
 {
     public class Package
     {
         public string Authors { get; set; }
         public string Copyright { get; set; }
         public string Created { get; set; }
-        public string Dependencies { get; set; }
+        public List<PackageDependency> Dependencies { get; set; }
         public string Description { get; set; }
         public string DevelopmentDependency { get; set; }
         public string DownloadCount { get; set; }

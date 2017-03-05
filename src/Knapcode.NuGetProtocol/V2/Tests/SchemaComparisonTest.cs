@@ -9,15 +9,11 @@ namespace Knapcode.NuGetProtocol.V2.Tests
     public class SchemaComparisonTest
     {
         private readonly PackageSourceProvider _packageSourceProvider;
-        private readonly PackageReader _packageReader;
-        private readonly TestData _testData;
         private readonly Client _client;
 
-        public SchemaComparisonTest(PackageSourceProvider packageSourceProvider, PackageReader packageReader, TestData testData, Client client)
+        public SchemaComparisonTest(PackageSourceProvider packageSourceProvider, Client client)
         {
             _packageSourceProvider = packageSourceProvider;
-            _packageReader = packageReader;
-            _testData = testData;
             _client = client;
         }
 
@@ -125,8 +121,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
 
             return output;
         }
-
-        private static Dictionary<string, T> GetConsistent<T>(
+        public static Dictionary<string, T> GetConsistent<T>(
             Dictionary<string, Dictionary<T, HashSet<PackageSourceType>>> propertyTypes)
         {
             return propertyTypes
@@ -134,7 +129,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                 .ToDictionary(x => x.Key, x => x.Value.First().Key);
         }
 
-        private static Dictionary<string, Dictionary<T, HashSet<PackageSourceType>>> GetDiffering<T>(
+        public static Dictionary<string, Dictionary<T, HashSet<PackageSourceType>>> GetDiffering<T>(
             Dictionary<string, Dictionary<T, HashSet<PackageSourceType>>> propertyTypes)
         {
             return propertyTypes
@@ -142,7 +137,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
                 .ToDictionary(x => x.Key, x => x.Value);
         }
 
-        private static void AddIfAllTypes(
+        public static void AddIfAllTypes(
             HashSet<PackageSourceType> allTypes,
             List<string> outputIfAllTypes,
             Dictionary<string, HashSet<PackageSourceType>> outputIfSomeTypes,
@@ -160,7 +155,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
             }
         }
 
-        private static void GroupByValue<T>(
+        public static void GroupByValue<T>(
             Dictionary<string, Dictionary<T, HashSet<PackageSourceType>>> allPropertyNames,
             string propertyName,
             Dictionary<PackageSourceType, T> typeToValue)
@@ -168,11 +163,6 @@ namespace Knapcode.NuGetProtocol.V2.Tests
             var current = new Dictionary<T, HashSet<PackageSourceType>>();
             foreach (var pair in typeToValue)
             {
-                if (pair.Value == null)
-                {
-                    continue;
-                }
-
                 HashSet<PackageSourceType> set;
                 if (!current.TryGetValue(pair.Value, out set))
                 {

@@ -1,50 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Knapcode.NuGetProtocol.Shared;
 
 namespace Knapcode.NuGetProtocol.V2
 {
     public class Mapper
     {
-        private static readonly Dictionary<string, Action<Package, string>> SetProperty = new Dictionary<string, Action<Package, string>>
+        private static readonly List<PropertyMapping> Properties = new List<PropertyMapping>
         {
-            { "Authors", (d, v) => d.Authors = v },
-            { "Copyright", (d, v) => d.Copyright = v },
-            { "Created", (d, v) => d.Created = v },
-            { "Dependencies", (d, v) => d.Dependencies = v },
-            { "Description", (d, v) => d.Description = v },
-            { "DevelopmentDependency", (d, v) => d.DevelopmentDependency = v },
-            { "DownloadCount", (d, v) => d.DownloadCount = v },
-            { "GalleryDetailsUrl", (d, v) => d.GalleryDetailsUrl = v },
-            { "IconUrl", (d, v) => d.IconUrl = v },
-            { "Id", (d, v) => d.Id = v },
-            { "IsAbsoluteLatestVersion", (d, v) => d.IsAbsoluteLatestVersion = v },
-            { "IsLatestVersion", (d, v) => d.IsLatestVersion = v },
-            { "IsPrerelease", (d, v) => d.IsPrerelease = v },
-            { "Language", (d, v) => d.Language = v },
-            { "LastEdited", (d, v) => d.LastEdited = v },
-            { "LastUpdated", (d, v) => d.LastUpdated = v },
-            { "LicenseNames", (d, v) => d.LicenseNames = v },
-            { "LicenseReportUrl", (d, v) => d.LicenseReportUrl = v },
-            { "LicenseUrl", (d, v) => d.LicenseUrl = v },
-            { "Listed", (d, v) => d.Listed = v },
-            { "MinClientVersion", (d, v) => d.MinClientVersion = v },
-            { "NormalizedVersion", (d, v) => d.NormalizedVersion = v },
-            { "Owners", (d, v) => d.Owners = v },
-            { "PackageHash", (d, v) => d.PackageHash = v },
-            { "PackageHashAlgorithm", (d, v) => d.PackageHashAlgorithm = v },
-            { "PackageSize", (d, v) => d.PackageSize = v },
-            { "ProjectUrl", (d, v) => d.ProjectUrl = v },
-            { "Published", (d, v) => d.Published = v },
-            { "ReleaseNotes", (d, v) => d.ReleaseNotes = v },
-            { "ReportAbuseUrl", (d, v) => d.ReportAbuseUrl = v },
-            { "RequireLicenseAcceptance", (d, v) => d.RequireLicenseAcceptance = v },
-            { "Summary", (d, v) => d.Summary = v },
-            { "Tags", (d, v) => d.Tags = v },
-            { "Title", (d, v) => d.Title = v },
-            { "Version", (d, v) => d.Version = v },
-            { "VersionDownloadCount", (d, v) => d.VersionDownloadCount = v },
+            new PropertyMapping("Authors", (d, v) => d.Authors = v, d => d.Authors),
+            new PropertyMapping("Copyright", (d, v) => d.Copyright = v, d => d.Copyright),
+            new PropertyMapping("Created", (d, v) => d.Created = v, d => d.Created),
+            new PropertyMapping("Dependencies", (d, v) => d.Dependencies = ParseDependencies(v), d => FlattenDependencies(d.Dependencies)),
+            new PropertyMapping("Description", (d, v) => d.Description = v, d => d.Description),
+            new PropertyMapping("DevelopmentDependency", (d, v) => d.DevelopmentDependency = v, d => d.DevelopmentDependency),
+            new PropertyMapping("DownloadCount", (d, v) => d.DownloadCount = v, d => d.DownloadCount),
+            new PropertyMapping("GalleryDetailsUrl", (d, v) => d.GalleryDetailsUrl = v, d => d.GalleryDetailsUrl),
+            new PropertyMapping("IconUrl", (d, v) => d.IconUrl = v, d => d.IconUrl),
+            new PropertyMapping("Id", (d, v) => d.Id = v, d => d.Id),
+            new PropertyMapping("IsAbsoluteLatestVersion", (d, v) => d.IsAbsoluteLatestVersion = v, d => d.IsAbsoluteLatestVersion),
+            new PropertyMapping("IsLatestVersion", (d, v) => d.IsLatestVersion = v, d => d.IsLatestVersion),
+            new PropertyMapping("IsPrerelease", (d, v) => d.IsPrerelease = v, d => d.IsPrerelease),
+            new PropertyMapping("Language", (d, v) => d.Language = v, d => d.Language),
+            new PropertyMapping("LastEdited", (d, v) => d.LastEdited = v, d => d.LastEdited),
+            new PropertyMapping("LastUpdated", (d, v) => d.LastUpdated = v, d => d.LastUpdated),
+            new PropertyMapping("LicenseNames", (d, v) => d.LicenseNames = v, d => d.LicenseNames),
+            new PropertyMapping("LicenseReportUrl", (d, v) => d.LicenseReportUrl = v, d => d.LicenseReportUrl),
+            new PropertyMapping("LicenseUrl", (d, v) => d.LicenseUrl = v, d => d.LicenseUrl),
+            new PropertyMapping("Listed", (d, v) => d.Listed = v, d => d.Listed),
+            new PropertyMapping("MinClientVersion", (d, v) => d.MinClientVersion = v, d => d.MinClientVersion),
+            new PropertyMapping("NormalizedVersion", (d, v) => d.NormalizedVersion = v, d => d.NormalizedVersion),
+            new PropertyMapping("Owners", (d, v) => d.Owners = v, d => d.Owners),
+            new PropertyMapping("PackageHash", (d, v) => d.PackageHash = v, d => d.PackageHash),
+            new PropertyMapping("PackageHashAlgorithm", (d, v) => d.PackageHashAlgorithm = v, d => d.PackageHashAlgorithm),
+            new PropertyMapping("PackageSize", (d, v) => d.PackageSize = v, d => d.PackageSize),
+            new PropertyMapping("ProjectUrl", (d, v) => d.ProjectUrl = v, d => d.ProjectUrl),
+            new PropertyMapping("Published", (d, v) => d.Published = v, d => d.Published),
+            new PropertyMapping("ReleaseNotes", (d, v) => d.ReleaseNotes = v, d => d.ReleaseNotes),
+            new PropertyMapping("ReportAbuseUrl", (d, v) => d.ReportAbuseUrl = v, d => d.ReportAbuseUrl),
+            new PropertyMapping("RequireLicenseAcceptance", (d, v) => d.RequireLicenseAcceptance = v, d => d.RequireLicenseAcceptance),
+            new PropertyMapping("Summary", (d, v) => d.Summary = v, d => d.Summary),
+            new PropertyMapping("Tags", (d, v) => d.Tags = v, d => d.Tags),
+            new PropertyMapping("Title", (d, v) => d.Title = v, d => d.Title),
+            new PropertyMapping("Version", (d, v) => d.Version = v, d => d.Version),
+            new PropertyMapping("VersionDownloadCount", (d, v) => d.VersionDownloadCount = v, d => d.VersionDownloadCount),
         };
+
+        private static readonly Dictionary<string, Action<Package, string>> SetProperty = Properties
+            .ToDictionary(x => x.Name, x => x.Set);
+
+        private static readonly Dictionary<string, Func<Package, string>> GetProperty = Properties
+            .ToDictionary(x => x.Name, x => x.Get);
 
         /*
          * SyndicationAuthorEmail: The atom:email child element of the atom:author element.
@@ -68,24 +76,37 @@ namespace Knapcode.NuGetProtocol.V2
             { Constants.SyndicationUpdated, Constants.UpdatedPath },
         };
 
-        public Package GetPackage(Metadata metadata, PackageEntry entry)
+        public PackageEntry GetPackageEntry(Package package)
         {
-            var package = new Package();
-
-            foreach (var pair in entry.PropertyPairs)
+            var propertyPairs = new List<KeyValuePair<string, string>>();
+            foreach (var property in Properties)
             {
-                Action<Package, string> setProperty;
-                if (!SetProperty.TryGetValue(pair.Key, out setProperty))
+                var value = property.Get(package);
+                if (value == null)
                 {
-                    throw new NotSupportedException($"The property element '{pair.Key}' is not supported.");
+                    continue;
                 }
 
-                setProperty(package, pair.Value);
+                propertyPairs.Add(new KeyValuePair<string, string>(property.Name, value));
             }
+
+            return new PackageEntry
+            {
+                AtomPairs = new List<KeyValuePair<string, string>>(),
+                PropertyPairs = propertyPairs,
+            };
+        }
+
+        public List<KeyValuePair<string, string>> GetPropertyPairs(Metadata metadata, PackageEntry entry)
+        {
+            var output = new List<KeyValuePair<string, string>>();
+
+            output.AddRange(entry.PropertyPairs);
 
             var atomProperties = entry
                 .AtomPairs
                 .ToLookup(x => x.Key, x => x.Value);
+
             foreach (var entityProperty in metadata.PackageEntityType.Properties)
             {
                 if (entityProperty.TargetPath == null)
@@ -99,22 +120,109 @@ namespace Knapcode.NuGetProtocol.V2
                     throw new NotSupportedException($"The target path '{entityProperty.TargetPath}' is not supported.");
                 }
 
-                var value = atomProperties[childPath].LastOrDefault();
-                if (value == null)
+                foreach (var value in atomProperties[childPath])
+                {
+                    output.Add(new KeyValuePair<string, string>(entityProperty.Name, value));
+                }
+            }
+
+            return output;
+        }
+
+        public Package GetPackage(Metadata metadata, PackageEntry entry)
+        {
+            var package = new Package();
+            var propertyPairs = GetPropertyPairs(metadata, entry);
+            foreach (var pair in propertyPairs)
+            {
+                Func<Package, string> getProperty;
+                if (!GetProperty.TryGetValue(pair.Key, out getProperty))
+                {
+                    throw new NotSupportedException($"The property element '{pair.Key}' is not supported.");
+                }
+
+                var existingValue = getProperty(package);
+                if (existingValue != null)
                 {
                     continue;
                 }
 
-                Action<Package, string> setProperty;
-                if (!SetProperty.TryGetValue(entityProperty.Name, out setProperty))
-                {
-                    throw new NotSupportedException($"The property element '{entityProperty.Name}' is not supported.");
-                }
-
-                setProperty(package, value);
+                var setProperty = SetProperty[pair.Key];
+                setProperty(package, pair.Value);
             }
 
             return package;
+        }
+
+        private static string FlattenDependencies(IEnumerable<PackageDependency> dependencies)
+        {
+            var output = new StringBuilder();
+            var first = true;
+            foreach (var dependency in dependencies)
+            {
+                if (!first)
+                {
+                    output.Append('|');
+                }
+
+                first = false;
+
+                output.Append(dependency.Id);
+
+                if (dependency.VersionRange != null)
+                {
+                    output.Append(':');
+                    output.Append(dependency.VersionRange);
+
+                    if (dependency.Framework != null)
+                    {
+                        output.Append(':');
+                        output.Append(dependency.Framework);
+                    }
+                }
+            }
+
+            return output.ToString();
+        }
+
+        private static List<PackageDependency> ParseDependencies(string flattened)
+        {
+            var output = new List<PackageDependency>();
+            foreach (var unparsedDependency in flattened.Split('|'))
+            {
+                var pieces = unparsedDependency.Split(':');
+
+                var packageDependency = new PackageDependency();
+                packageDependency.Id = pieces[0];
+
+                if (pieces.Length > 1)
+                {
+                    packageDependency.VersionRange = pieces[1];
+                }
+
+                if (pieces.Length > 2)
+                {
+                    packageDependency.Framework = pieces[2];
+                }
+
+                output.Add(packageDependency);
+            }
+
+            return output;
+        }
+
+        private class PropertyMapping
+        {
+            public PropertyMapping(string name, Action<Package, string> set, Func<Package, string> get)
+            {
+                Name = name;
+                Set = set;
+                Get = get;
+            }
+
+            public string Name { get; }
+            public Action<Package, string> Set { get; }
+            public Func<Package, string> Get { get; }
         }
     }
 }
