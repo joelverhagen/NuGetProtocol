@@ -121,6 +121,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
 
             return output;
         }
+
         public static Dictionary<string, T> GetConsistent<T>(
             Dictionary<string, Dictionary<T, HashSet<PackageSourceType>>> propertyTypes)
         {
