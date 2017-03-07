@@ -46,28 +46,32 @@ namespace Knapcode.NuGetProtocol.Sandbox
                 var protocol = new Protocol(httpClient, parser);
                 var client = new Client(protocol, packageReader);
 
-                var propertyComparisonTest = new PropertyComparisonTest(packageSourceProvider, packageReader, testData, client, mapper);
-                var propertyComparison = await propertyComparisonTest.ExecuteAsync();
-                Console.WriteLine(JsonConvert.SerializeObject(propertyComparison, new JsonSerializerSettings
-                {
-                    Formatting = Formatting.Indented,
-                    Converters =
-                    {
-                        new StringEnumConverter()
-                    }
-                }));
-
                 var schemaComparisonTest = new SchemaComparisonTest(packageSourceProvider, client);
                 var schemaComparison = await schemaComparisonTest.ExecuteAsync();
-                Console.WriteLine(JsonConvert.SerializeObject(schemaComparison, new JsonSerializerSettings
-                {
-                    Formatting = Formatting.Indented,
-                    Converters =
-                    {
-                        new StringEnumConverter()
-                    }
-                }));
 
+                var propertyComparisonTest = new PropertyComparisonTest(packageSourceProvider, packageReader, testData, client, mapper);
+                var propertyComparison = await propertyComparisonTest.ExecuteAsync();
+
+                var propertyConsistencyTest = new PropertyConsistencyTest(packageSourceProvider, client, testData, packageReader);
+                var propertyConsistency = await propertyConsistencyTest.ExecuteAsync();
+
+                Console.WriteLine(JsonConvert.SerializeObject(
+                    new
+                    {
+                        SchemaComparison = schemaComparison,
+                        PropertyComparison = propertyComparison,
+                        PropertyConsistency = propertyConsistency,
+                    },
+                    new JsonSerializerSettings
+                    {
+                        Formatting = Formatting.Indented,
+                        Converters = new[]
+                        {
+                            new StringEnumConverter(),
+                        },
+                    }));
+
+                /*
                 var abbreviation = new Abbreviations();
                 var markdownTableWriter = new MarkdownTableWriter();
                 var report = new SchemaComparisonWriter(abbreviation, markdownTableWriter);
@@ -75,6 +79,7 @@ namespace Knapcode.NuGetProtocol.Sandbox
                 report.Write(sb, schemaComparison);
 
                 Console.WriteLine(sb.ToString());
+                */
             }
         }
     }

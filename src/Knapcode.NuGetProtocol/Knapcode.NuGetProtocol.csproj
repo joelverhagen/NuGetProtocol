@@ -6,6 +6,7 @@
     <None Include="V2\Tests\PropertyComparisonTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="1.1.0" />
     <PackageReference Include="NuGet.Packaging" Version="4.0.0-rtm-2265" />

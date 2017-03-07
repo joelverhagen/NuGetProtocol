@@ -39,13 +39,9 @@ namespace Knapcode.NuGetProtocol.V2.Tests
 
         public async Task<PropertyComparison> ExecuteAsync()
         {
-            var allTypes = new HashSet<PackageSourceType>();
-            var sources = _packageSourceProvider.GetPackageSouces();
             var typeToPackageProperties = new Dictionary<PackageSourceType, Dictionary<string, string>>();
-            foreach (var source in sources)
+            foreach (var source in _packageSourceProvider.GetPackageSources())
             {
-                allTypes.Add(source.Type);
-
                 var result = await _client.PushPackageIfNotExistsAsync(source, _testData.PackageKNpB);
                 if (result.PackageResult.Data == null)
                 {
@@ -132,6 +128,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
 
             return new PropertyComparison
             {
+                ExpectedValues = expectedValues,
                 ValuesSameAsSource = valuesSameAsSource,
                 ValuesIntendedToBeDifferent = valuesIntendedToBeDifferent,
                 ValuesNotIntendedToBeDifferent = valuesNotIntendedToBeDifferent,

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -6,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Knapcode.NuGetProtocol.Shared;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Knapcode.NuGetProtocol.V2
 {
@@ -62,7 +64,37 @@ namespace Knapcode.NuGetProtocol.V2
             }
         }
 
-        public async Task<HttpResult<PackageEntry>> GetPackageAsync(PackageSource source, PackageIdentity package)
+        public async Task<HttpResult<PackageFeed>> GetPackageCollectionAsync(
+            PackageSource source,
+            string filter)
+        {
+            var uri = $"{source.SourceUri}/Packages()";
+            uri = QueryHelpers.AddQueryString(uri, "$filter", filter);
+
+            using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
+            {
+                source.SourceAuthorization.Authenticate(request);
+
+                using (var response = await _httpClient.SendAsync(request))
+                {
+                    VerifyStatusCode(response, HttpStatusCode.OK);
+
+                    var output = new HttpResult<PackageFeed>
+                    {
+                        StatusCode = response.StatusCode,
+                    };
+
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    {
+                        output.Data = await _parser.ParsePackageFeedAsync(stream);
+                    }
+
+                    return output;
+                }
+            }
+        }
+
+        public async Task<HttpResult<PackageEntry>> GetPackageEntryAsync(PackageSource source, PackageIdentity package)
         {
             var uri = $"{source.SourceUri}/Packages(Id='{Uri.EscapeDataString(package.Id)}',Version='{Uri.EscapeDataString(package.Version)}')";
 

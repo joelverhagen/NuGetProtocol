@@ -21,7 +21,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
         {
             var allTypes = new HashSet<PackageSourceType>();
             var propertyNameToData = new Dictionary<string, PropertyData>();
-            var sources = _packageSourceProvider.GetPackageSouces();
+            var sources = _packageSourceProvider.GetPackageSources();
             foreach (var source in sources)
             {
                 allTypes.Add(source.Type);

@@ -12,7 +12,7 @@ namespace Knapcode.NuGetProtocol.Shared
             _options = options;
         }
 
-        public IEnumerable<PackageSource> GetPackageSouces()
+        public IEnumerable<PackageSource> GetPackageSources()
         {
             if (_options.Value.NuGetGalleryV2SourceUri != null)
             {

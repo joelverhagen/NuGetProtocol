@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Knapcode.NuGetProtocol.Shared;
@@ -34,9 +35,60 @@ namespace Knapcode.NuGetProtocol.V2
             return await _protocol.PushPackageAsync(source, package);
         }
 
-        public async Task<HttpResult<PackageEntry>> GetPackageAsync(PackageSource source, PackageIdentity package)
+        public async Task<HttpResult<PackageEntry>> GetPackageEntryAsync(PackageSource source, PackageIdentity package)
         {
-            return await _protocol.GetPackageAsync(source, package);
+            return await _protocol.GetPackageEntryAsync(source, package);
+        }
+
+        public async Task<HttpResult<PackageFeed>> GetPackageCollectionAsync(PackageSource source, string filter)
+        {
+            return await _protocol.GetPackageCollectionAsync(source, filter);
+        }
+
+        public async Task<HttpResult<PackageEntry>> GetPackageEntryFromCollectionWithCustomFilterAsync(PackageSource source, PackageIdentity package)
+        {
+            return await GetPackageEntryFromCollection(
+                source,
+                $"Id eq '{package.Id}' and Version eq '{package.Version}' and not startswith(Id, '!IMPOSSIBLE!')");
+        }
+
+        public async Task<HttpResult<PackageEntry>> GetPackageEntryFromCollectionWithSimpleFilterAsync(PackageSource source, PackageIdentity package)
+        {
+            return await GetPackageEntryFromCollection(
+                source,
+                $"Id eq '{package.Id}' and Version eq '{package.Version}'");
+        }
+
+        private async Task<HttpResult<PackageEntry>> GetPackageEntryFromCollection(PackageSource source, string filter)
+        {
+            var result = await _protocol.GetPackageCollectionAsync(source, filter);
+
+            if (result.StatusCode != HttpStatusCode.OK)
+            {
+                return new HttpResult<PackageEntry>
+                {
+                    StatusCode = result.StatusCode,
+                };
+            }
+
+            var count = result.Data.Entries.Count();
+            if (count == 0)
+            {
+                return new HttpResult<PackageEntry>
+                {
+                    StatusCode = HttpStatusCode.NotFound,
+                };
+            }
+            else if (count == 0)
+            {
+                throw new InvalidDataException($"Either zero or one results are expected. {count} were returned.");
+            }
+
+            return new HttpResult<PackageEntry>
+            {
+                StatusCode = HttpStatusCode.OK,
+                Data = result.Data.Entries.First(),
+            };
         }
 
         public async Task<ConditionalPushResult> PushPackageIfNotExistsAsync(PackageSource source, Stream package)
@@ -45,7 +97,7 @@ namespace Knapcode.NuGetProtocol.V2
 
             package.Position = 0;
 
-            var packageResultBeforePush = await GetPackageAsync(source, identity);
+            var packageResultBeforePush = await GetPackageEntryAsync(source, identity);
             if (packageResultBeforePush.StatusCode == HttpStatusCode.OK)
             {
                 return new ConditionalPushResult
@@ -63,7 +115,7 @@ namespace Knapcode.NuGetProtocol.V2
             while (packageStatusCode == HttpStatusCode.NotFound &&
                    stopwatch.Elapsed < TimeSpan.FromMinutes(20))
             {
-                packageResultAfterPush = await GetPackageAsync(source, identity);
+                packageResultAfterPush = await GetPackageEntryAsync(source, identity);
                 packageStatusCode = packageResultAfterPush.StatusCode;
                 if (packageStatusCode == HttpStatusCode.NotFound)
                 {
