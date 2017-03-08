@@ -42,6 +42,23 @@ namespace Knapcode.NuGetProtocol.V2
             }
         }
 
+        public async Task<HttpStatusCode> DeletePackageAsync(PackageSource source, PackageIdentity identity)
+        {
+            var requestUri = $"{source.PushUri}/{identity.Id}/{identity.Version}";
+
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, requestUri))
+            {
+                source.PushAuthorization.Authenticate(request);
+                
+                using (var response = await _httpClient.SendAsync(request))
+                {
+                    VerifyStatusCode(response, HttpStatusCode.OK, HttpStatusCode.Accepted, HttpStatusCode.NoContent);
+
+                    return response.StatusCode;
+                }
+            }
+        }
+
         public async Task<HttpStatusCode> PushPackageAsync(PackageSource source, Stream package)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, source.PushUri))

@@ -35,6 +35,11 @@ namespace Knapcode.NuGetProtocol.V2
             return await _protocol.PushPackageAsync(source, package);
         }
 
+        public async Task<HttpStatusCode> DeletePackageAsync(PackageSource source, PackageIdentity package)
+        {
+            return await _protocol.DeletePackageAsync(source, package);
+        }
+
         public async Task<HttpResult<PackageEntry>> GetPackageEntryAsync(PackageSource source, PackageIdentity package)
         {
             return await _protocol.GetPackageEntryAsync(source, package);
@@ -132,6 +137,16 @@ namespace Knapcode.NuGetProtocol.V2
                 TimeToPush = timeToPush,
                 TimeToBeAvailable = packageStatusCode == HttpStatusCode.OK ? stopwatch.Elapsed : (TimeSpan?)null,
             };
+        }
+
+        public async Task<ConditionalPushResult> PushAndUnlistPackageIfNotExistsAsync(PackageSource source, Stream package)
+        {
+            var identity = _packageReader.GetPackageIdentity(package);
+            package.Position = 0;
+            var result = await PushPackageIfNotExistsAsync(source, package);
+            var deleteStatusCode = await _protocol.DeletePackageAsync(source, identity);
+
+            return result;
         }
     }
 }

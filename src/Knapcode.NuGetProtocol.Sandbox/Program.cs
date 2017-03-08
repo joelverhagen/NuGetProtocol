@@ -46,6 +46,18 @@ namespace Knapcode.NuGetProtocol.Sandbox
                 var protocol = new Protocol(httpClient, parser);
                 var client = new Client(protocol, packageReader);
 
+                /*
+                var sources = packageSourceProvider.GetPackageSources();
+                foreach (var source in sources)
+                {
+                    using (var package = testData.PackageUnlisted)
+                    {
+                        await client.PushAndUnlistPackageIfNotExistsAsync(source, package);    
+                    }
+                }
+                */
+
+                /*
                 var schemaComparisonTest = new SchemaComparisonTest(packageSourceProvider, client);
                 var schemaComparison = await schemaComparisonTest.ExecuteAsync();
 
@@ -70,6 +82,7 @@ namespace Knapcode.NuGetProtocol.Sandbox
                             new StringEnumConverter(),
                         },
                     }));
+                */
 
                 /*
                 var abbreviation = new Abbreviations();
