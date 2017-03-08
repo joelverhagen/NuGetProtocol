@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace K.Np.A
+﻿namespace K.Np.Unlisted
 {
     public class Class1
     {

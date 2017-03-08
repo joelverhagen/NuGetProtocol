@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata>
-    <id>K.Np.A</id>
+    <id>K.Np.Unlisted</id>
     <version>1.0.0-beta1</version>
-    <authors>K.Np.A</authors>
-    <owners>K.Np.A</owners>
+    <authors>K.Np.Unlisted</authors>
+    <owners>K.Np.Unlisted</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Package Description</description>
     <dependencies>
@@ -19,7 +19,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Debug\net45\K.Np.A.dll" target="lib\net45\K.Np.A.dll" />
-    <file src="bin\Debug\net46\K.Np.A.dll" target="lib\net46\K.Np.A.dll" />
+    <file src="bin\Debug\net45\K.Np.Unlisted.dll" target="lib\net45\K.Np.Unlisted.dll" />
+    <file src="bin\Debug\net46\K.Np.Unlisted.dll" target="lib\net46\K.Np.Unlisted.dll" />
   </files>
 </package>

@@ -109,7 +109,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
             var sourceToPackageEntry = new Dictionary<PackageEntrySource, PackageEntry>();
 
             // Push then fetch.
-            var pushResult = await _client.PushPackageIfNotExistsAsync(source, _testData.PackageKNpB);
+            var pushResult = await _client.PushPackageIfNotExistsAsync(source, _testData.PackageFullMetadata);
             if (pushResult.PackageResult.Data == null)
             {
                 throw new InvalidOperationException("The package was not pushed successfully.");
@@ -117,7 +117,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
             sourceToPackageEntry[PackageEntrySource.GetPackageFirst] = pushResult.PackageResult.Data;
 
             // Fetch again. This should return same result as the previous request since it's using the exact same API.
-            var packageIdentity = _packageReader.GetPackageIdentity(_testData.PackageKNpB);
+            var packageIdentity = _packageReader.GetPackageIdentity(_testData.PackageFullMetadata);
             var getPackageResult = await _client.GetPackageEntryAsync(source, packageIdentity);
             if (getPackageResult.Data == null)
             {

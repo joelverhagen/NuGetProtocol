@@ -42,7 +42,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
             var typeToPackageProperties = new Dictionary<PackageSourceType, Dictionary<string, string>>();
             foreach (var source in _packageSourceProvider.GetPackageSources())
             {
-                var result = await _client.PushPackageIfNotExistsAsync(source, _testData.PackageKNpB);
+                var result = await _client.PushPackageIfNotExistsAsync(source, _testData.PackageFullMetadata);
                 if (result.PackageResult.Data == null)
                 {
                     throw new InvalidOperationException("The package was not pushed successfully.");
@@ -80,7 +80,7 @@ namespace Knapcode.NuGetProtocol.V2.Tests
 
             // Get the expected properties from the package itself.
             var originalPackage = await _packageReader.GetPackageAsync(
-                _testData.PackageKNpB,
+                _testData.PackageFullMetadata,
                 listed: true,
                 isAbsoluteLatestVersion: true,
                 isLatestVersion: false);

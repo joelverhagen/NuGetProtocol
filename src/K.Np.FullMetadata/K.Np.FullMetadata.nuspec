@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata minClientVersion="0.0.1">
-    <id>K.Np.B</id>
+    <id>K.Np.FullMetadata</id>
     <version>1.0.0-alpha1</version>
-    <title>Some title for K.Np.B</title>
+    <title>Some title for K.Np.FullMetadata</title>
     <authors>AuthorAFirst AuthorBLast, AuthorB, AuthorCFirst AuthorCLast, AuthorD</authors>
     <owners>OwnerAFirst OwnerBLast, OwnerB, OwnerCFirst OwnerCLast, OwnerD</owners>
     <licenseUrl>https://raw.githubusercontent.com/joelverhagen/NuGetProtocol/master/LICENSE?K.Np.B</licenseUrl>
@@ -11,12 +11,12 @@
     <iconUrl>https://gitcdn.link/repo/joelverhagen/NuGetProtocol/e482156a015cfd8f10ddf3a3735255f9a54b3b36/static/nuget-logo-64x64.png?K.Np.B</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <developmentDependency>true</developmentDependency>
-    <description>Some description for K.Np.B</description>
-    <summary>Some summary for K.Np.B</summary>
-    <releaseNotes>Some release notes for K.Np.B</releaseNotes>
-    <copyright>Some copyright for K.Np.B</copyright>
+    <description>Some description for K.Np.FullMetadata</description>
+    <summary>Some summary for K.Np.FullMetadata</summary>
+    <releaseNotes>Some release notes for K.Np.FullMetadata</releaseNotes>
+    <copyright>Some copyright for K.Np.FullMetadata</copyright>
     <language>en</language>
-    <tags>Some tags for K.Np.B</tags>
+    <tags>Some tags for K.Np.FullMetadata</tags>
     <dependencies>
       <group targetFramework=".NETFramework4.6">
         <dependency id="log4net" version="2.0.5" />
@@ -29,7 +29,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Debug\net45\K.Np.B.dll" target="lib\net45\K.Np.B.dll" />
-    <file src="bin\Debug\net46\K.Np.B.dll" target="lib\net46\K.Np.B.dll" />
+    <file src="bin\Debug\net45\K.Np.FullMetadata.dll" target="lib\net45\K.Np.FullMetadata.dll" />
+    <file src="bin\Debug\net46\K.Np.FullMetadata.dll" target="lib\net46\K.Np.FullMetadata.dll" />
   </files>
 </package>

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace K.Np.B
+﻿namespace K.Np.FullMetadata
 {
     public class Class1
     {

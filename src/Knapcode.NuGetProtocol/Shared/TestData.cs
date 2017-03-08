@@ -43,14 +43,14 @@ namespace Knapcode.NuGetProtocol.Shared
             _directory = directory;
         }
 
-        public Stream PackageKNpA => new FileStream(
-            Path.Combine(_directory, "K.Np.A.1.0.0-beta1.nupkg"),
+        public Stream PackageFullMetadata => new FileStream(
+            Path.Combine(_directory, "K.Np.FullMetadata.1.0.0-alpha1.nupkg"),
             FileMode.Open,
             FileAccess.Read,
             FileShare.Read);
 
-        public Stream PackageKNpB => new FileStream(
-            Path.Combine(_directory, "K.Np.B.1.0.0-alpha1.nupkg"),
+        public Stream PackageUnlisted => new FileStream(
+            Path.Combine(_directory, "K.Np.Unlisted.1.0.0-beta1.nupkg"),
             FileMode.Open,
             FileAccess.Read,
             FileShare.Read);
