@@ -34,7 +34,7 @@ namespace Knapcode.NuGetServerWcf
 
             // Route to delete packages
             routes.MapDelegate("DeletePackage-Root",
-                               "{packageId}/{version}",
+                               "nuget/{packageId}/{version}",
                                new { httpMethod = new HttpMethodConstraint("DELETE") },
                                context => CreatePackageService().DeletePackage(context.HttpContext));
 
